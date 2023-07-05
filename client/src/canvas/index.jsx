@@ -1,10 +1,11 @@
-import React, {useRef} from 'react'
+import React from 'react'
 import { Canvas } from '@react-three/fiber'
-import { Environment, Center } from '@react-three/drei'
+import { Sky, Stars } from '@react-three/drei'
 
 import Backdrop from './Backdrop'
 import CameraRig from './CameraRig'
 import Shirt from './Shirt'
+import ErrorBoundary from '../utils/ErrorBoundary'
 
 const CanvasModel = () => {
   return (
@@ -15,13 +16,13 @@ const CanvasModel = () => {
       className="w-full max-w-full h-full transition-all ease-in"
     >
       <ambientLight intensity={.4} />
-      <Environment preset="city" />
+      <directionalLight position={[0, 10, 0]} intensity={0.5} castShadow shadow-mapSize-width={2048} shadow-mapSize-height={2048} />
+      <Sky sunPosition={[100, 100, 100]} />
+      <Stars sunPosition={[100, 100, 100]} />
 
       <CameraRig>
         <Backdrop />
-        <Center>
-          <Shirt />
-        </Center>
+        <Shirt />
       </CameraRig>
     </Canvas>
   )

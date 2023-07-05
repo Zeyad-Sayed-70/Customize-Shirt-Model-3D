@@ -7,20 +7,33 @@ import state from '../store'
 import { EditorTabs, FilterTabs, DecalTypes } from '../config/constants'
 import { CustomButton, AIPicker, ColorPicker, FilePicker, Tab } from '../components'
 import { reader } from '../config/helpers'
+import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter'
 
 const Customizer = () => {
   const snap = useSnapshot(state)
-
+  
   const [file, setFile] = useState('')
-
+  
   const [prompt, setPrompt] = useState('');
   const [generatingImg, setGeneratingImg] = useState(false);
-
+  
   const [activeEditorTab, setActiveEditorTab] = useState("");
   const [activeFilterTab, setActiveFilterTab] = useState({
     logoShirt: true,
     stylishShirt: false,
   })
+  
+  const exporter = new GLTFExporter()
+
+  const handleExport = () => {
+    const scene = document.querySelector('canvas').parentNode
+    exporter.parse(scene, (gltf) => {
+      const link = document.createElement('a')
+      link.href = URL.createObjectURL(new Blob([JSON.stringify(gltf)], { type: 'text/plain' }))
+      link.download = 'shirt.glb'
+      link.click()
+    })
+  }
 
   const generatingContent = () => {
     switch (activeEditorTab) {
@@ -117,6 +130,18 @@ const Customizer = () => {
                 type={'filled'}
                 title={"Go Back"}
                 handleClick={() => state.intro = true}
+                customStyles="w-fit px-4 py-2.5 font-bold text-sm"
+              />
+            </motion.div>
+
+            <motion.div
+              className='absolute bottom-5 right-5 z-20'
+              {...fadeAnimation}
+            >
+              <CustomButton 
+                type={'filled'}
+                title={"Export"}
+                handleClick={handleExport}
                 customStyles="w-fit px-4 py-2.5 font-bold text-sm"
               />
             </motion.div>
